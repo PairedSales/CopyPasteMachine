@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Appraisal Statement Library</title>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
+<style>
+  /* Dracula palette */
+  :root {
+    --bg: #282a36;
+    --current-line: #44475a;
+    --fg: #f8f8f2;
+    --comment: #6272a4;
+    --cyan: #8be9fd;
+    --green: #50fa7b;
+    --orange: #ffb86c;
+    --pink: #ff79c6;
+    --purple: #bd93f9;
+    --red: #ff5555;
+    --yellow: #f1fa8c;
+    --card: #313341;
+    --card-hover: #3a3d4d;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+  }
+  ::selection { background: var(--purple); color: var(--bg); }
+
+  header.appbar {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--bg);
+    border-bottom: 1px solid var(--current-line);
+    padding: 14px 20px 12px;
+  }
+  .appbar-row {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    max-width: 1200px; margin: 0 auto;
+  }
+  .appbar h1 { font-size: 18px; margin: 0; white-space: nowrap; color: var(--purple); }
+  .appbar h1 span { color: var(--comment); font-weight: 400; font-size: 14px; }
+  .search {
+    flex: 1; min-width: 220px;
+    display: flex; align-items: center; gap: 8px;
+    background: var(--current-line); border: 1px solid var(--current-line);
+    border-radius: 8px; padding: 7px 12px;
+  }
+  .search:focus-within { border-color: var(--purple); }
+  .search input {
+    flex: 1; border: none; background: transparent; outline: none;
+    font-size: 15px; color: var(--fg);
+  }
+  .search input::placeholder { color: var(--comment); }
+  .search .clear {
+    border: none; background: none; color: var(--comment); cursor: pointer; font-size: 14px; padding: 0;
+  }
+  .search .clear:hover { color: var(--red); }
+  .btn {
+    border: 1px solid var(--current-line); background: var(--card); color: var(--fg);
+    border-radius: 8px; padding: 8px 14px; font-size: 14px; cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn:hover { border-color: var(--purple); color: var(--purple); }
+  .btn.primary {
+    background: var(--purple); color: var(--bg); border-color: var(--purple); font-weight: 600;
+  }
+  .btn.primary:hover { background: var(--pink); border-color: var(--pink); color: var(--bg); }
+  .chips {
+    max-width: 1200px; margin: 10px auto 0; display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .chip {
+    border: 1px solid var(--current-line); background: transparent; color: var(--comment);
+    border-radius: 999px; padding: 4px 12px; font-size: 13px; cursor: pointer;
+  }
+  .chip:hover { color: var(--cyan); border-color: var(--cyan); }
+  .chip.active { background: var(--purple); border-color: var(--purple); color: var(--bg); font-weight: 600; }
+
+  main { max-width: 1200px; margin: 0 auto; padding: 20px; }
+  .grid {
+    display: grid; gap: 14px;
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  }
+
+  .card {
+    position: relative;
+    background: var(--card); border: 1px solid var(--current-line); border-radius: 10px;
+    padding: 14px 16px; display: flex; flex-direction: column; gap: 8px;
+    cursor: pointer;
+    transition: background .12s, border-color .12s, transform .12s;
+  }
+  .card:hover { background: var(--card-hover); border-color: var(--purple); }
+  .card:active { transform: scale(.985); }
+  .card.just-copied { border-color: var(--green); }
+  .card-title {
+    font-weight: 600; font-size: 15px; line-height: 1.3; color: var(--cyan);
+    padding-right: 44px; /* room for hover controls */
+  }
+  .card-text {
+    font-size: 13.5px; color: #c3c7d1; line-height: 1.5; white-space: pre-wrap;
+    overflow: hidden; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;
+  }
+  .card-text.expanded { display: block; -webkit-line-clamp: unset; }
+  .card-foot { display: flex; align-items: center; gap: 6px; margin-top: auto; min-height: 18px; }
+  .tag {
+    font-size: 11px; letter-spacing: .3px;
+    border: 1px solid var(--comment); color: var(--comment);
+    border-radius: 999px; padding: 1px 8px;
+  }
+  .count { font-size: 11px; color: var(--comment); margin-left: auto; }
+  .copy-hint {
+    position: absolute; inset: 0; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(40, 42, 54, .82);
+    color: var(--green); font-size: 17px; font-weight: 700;
+    opacity: 0; pointer-events: none; transition: opacity .15s;
+  }
+  .card.just-copied .copy-hint { opacity: 1; }
+
+  /* hover controls */
+  .card-controls {
+    position: absolute; top: 8px; right: 8px;
+    display: flex; gap: 4px;
+    opacity: 0; transition: opacity .12s;
+  }
+  .card:hover .card-controls, .card-controls:focus-within { opacity: 1; }
+  .ctrl {
+    border: none; border-radius: 6px; cursor: pointer;
+    width: 24px; height: 24px; line-height: 24px; padding: 0;
+    font-size: 13px; text-align: center;
+    background: var(--current-line); color: var(--comment);
+  }
+  .ctrl:hover { color: var(--bg); }
+  .ctrl.edit:hover { background: var(--cyan); }
+  .ctrl.expand:hover { background: var(--orange); }
+  .ctrl.del:hover { background: var(--red); }
+  .ctrl.pin:hover { background: var(--yellow); }
+  .ctrl.pin.pinned { opacity: 1; color: var(--yellow); }
+  .card .ctrl.pin.pinned { background: transparent; }
+  .card .ctrl.pin.pinned:hover { background: var(--yellow); color: var(--bg); }
+  /* keep pinned star visible even when controls are hidden */
+  .card-controls.has-pin { opacity: 0; }
+  .pin-solo {
+    position: absolute; top: 8px; right: 8px;
+    color: var(--yellow); font-size: 13px; pointer-events: none;
+  }
+  .card:hover .pin-solo { opacity: 0; }
+
+  .empty { text-align: center; color: var(--comment); padding: 60px 0; font-size: 15px; }
+
+  /* modal */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(20, 21, 28, .7); z-index: 50;
+    display: flex; align-items: flex-start; justify-content: center; padding: 40px 16px;
+  }
+  .modal {
+    background: var(--card); border: 1px solid var(--current-line); border-radius: 12px;
+    width: 640px; max-width: 100%;
+    padding: 20px; display: flex; flex-direction: column; gap: 12px;
+    max-height: calc(100vh - 80px); overflow: auto;
+  }
+  .modal h2 { margin: 0; font-size: 17px; color: var(--purple); }
+  .modal label { font-size: 13px; font-weight: 600; color: var(--comment); display: block; margin-bottom: 4px; }
+  .modal label em { font-weight: 400; font-style: normal; }
+  .modal input[type=text], .modal textarea {
+    width: 100%; border: 1px solid var(--current-line); border-radius: 8px;
+    padding: 9px 11px; font-size: 14px; font-family: inherit; color: var(--fg);
+    background: var(--bg); outline: none;
+  }
+  .modal input:focus, .modal textarea:focus { border-color: var(--purple); }
+  .modal textarea { min-height: 220px; resize: vertical; line-height: 1.5; }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+  .toolbar-right { display: flex; gap: 8px; }
+  footer { text-align: center; color: var(--comment); font-size: 12px; padding: 10px 0 30px; }
+  kbd {
+    background: var(--current-line); border: 1px solid var(--comment); border-bottom-width: 2px;
+    border-radius: 4px; padding: 0 5px; font-size: 11px; color: var(--fg);
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="env,react">
+const { useState, useEffect, useRef, useMemo } = React;
+
+const STORAGE_KEY = "appraisalStatements.v2";
+const OLD_STORAGE_KEY = "appraisalStatements.v1";
+
+const SEED = [
+  {
+    id: "contract-vs-market",
+    title: "Contract Price vs Estimate of Market Value",
+    tags: ["Valuation"],
+    text: "Contract price is based on the motivations of the particular buyer and seller in the contract.  Market value is based on the motivations of the 'typical' buyer and seller, assuming a hypothetical sale of the subject using all of the data available to arrive at a 'most probable' price.\n\nIt is not reasonable or correct to speculate on the motivations of the buyer and seller in the contract, but when contract price and market value vary it should be specifically addressed."
+  },
+  {
+    id: "il-home-inspection",
+    title: "Illinois Home Inspection Disclosure",
+    tags: ["Disclosures"],
+    text: "The comments by the licensed real estate appraiser contained within this appraisal report on the condition of the property do not address \"standards of practice\" as defined in the home inspector license act [225 ILCS 441] and 68 ILL. Adm. Code 1410 and are not to be considered a home inspection or home inspection report."
+  },
+  {
+    id: "borrower-vs-owner",
+    title: "Borrower vs Owner of Public Record",
+    tags: ["Disclosures"],
+    text: "The borrower varies from the owner of public record, but this has no effect on the appraisal or the subject's marketability/value."
+  },
+  {
+    id: "gba-cook-county",
+    title: "GBA Data in Cook County",
+    tags: ["Data Quality", "Cook County"],
+    text: "Basement size is not recorded by the Cook County Assessor and agents do not typically measure for MLS listings.  GBA data is also not always accurate and it is not common to measure the building for the MLS listing.  In some cases, the best data available is a reasonable estimate of the finished size based on the assessor data, the MLS data, and aerial map measurements using Google satellite map measurement tools.  Great care is taken to ensure that good size data is used in the grid, but the GBAs might vary from other appraisals in the are."
+  },
+  {
+    id: "gla-2story-cook",
+    title: "GLA Discrepancies for 2-Story Properties in Cook County",
+    tags: ["Data Quality", "Cook County"],
+    text: "Property sketches are not available in Cook County and the GLA data for 2-story homes is not good.  Additions are not usually captured and second floor space is rarely captured for bungalow and capecod style homes.  MLS data is also not good, since only interior rooms are measured if anything is measured at all.  Many listings use the County assessor's size regardless of accuracy and a significant number of listings omit size completely.  Basement data is also not recorded by the assessor and MLS listings.\n\nIn many cases, the best GLA source for 2-story properties in Cook County is an estimate using Google satellite maps measuring tool along with the data in the MLS listing and assessor.  Any floorplan sketches uploaded to the MLS are sketched for square footage, but MLS floorplans are not common.\n\nThe GLA and basement size data in the grid might vary from other appraisals in the area, but great care is taken to ensure that reasonable and accurate measurements are used for the comparables in the grid."
+  },
+  {
+    id: "budget-improvements",
+    title: "Comments on Budget for Improvements",
+    tags: ["Valuation"],
+    text: "The subject is not a contractor and the best cost estimates come from actual bids for the work to be completed.  Based on the inspection, prior renovation projects, and the Marshal Swift Residential Cost Handbook, the budget is complete and reasonable.  No irregularities are noted."
+  },
+  {
+    id: "mc-form",
+    title: "MC Form Not Relevant",
+    tags: ["Forms"],
+    text: "This form is not a reasonable tool for demonstrating market trends and the data above should be ignored.  See attached \"Market Conditions Data from MRED MLS\"  This form arbitrarily splits the year into a 6-month period and two 3-month periods.  The statistical analysis of the form is not robust enough to properly display the market trends.  It is recognized that the grid above shows prices are decreasing from $235,000 to $175,000, but that is not accurate.  This form is not relevant.  Prices are increasing and higher compared to 2024.  See attached \"Market Conditions Data from MRED MLS\".\n\nIf every home were similar and there were hundreds of sales each period, then this form would work; however, there simply isn't enough data for this analysis to be relevant.  The data in the grid above and at the top of pg 2 is based on all of the sales in the neighborhood.  This form would be even less relevant if only the 'comparable' sales were considered."
+  },
+  {
+    id: "seller-concessions",
+    title: "Seller Concession Adjustments",
+    tags: ["Adjustments"],
+    text: "It is not logical to assume that a seller - acting in their own best interest - would give free money to the buyer during negotiations.  If money is needed to bring a buyer to the table, the seller will certainly factor that cost into the price of the home.  In most cases, seller concessions should be adjusted dollar-for-dollar.  Realtors report that sellers are only interested in the final value.\n\nSome claim that a certain amount of seller concessions are typical and should not be adjusted.  Following this logic, upward adjustments should be made to the sales that do not have seller concessions.  Of course this is unreasonable.  (Valuation by Comparison 2nd Edition, published by the Appraisal Institute, authored by Mark R. Ratterman, MAI, SRA (page 140))"
+  },
+  {
+    id: "gla-attached-cook",
+    title: "GLA Data for Attached Units in Cook County",
+    tags: ["Data Quality", "Cook County"],
+    text: "Cook County does not record the size of attached units, and property sketches are not made available.  There is no MLS standard for property size among agents.  Many listings inflate size and a significant number of listings omit size completely.\n\nSome listings do include a floorplan sketch that can be traced to calculate size, but in general GLA data is not good for attached properties in Cook County.  In many cases, the best source available is a reasonable estimate using Google Earth satellite maps and measuring tools.\n\nGreat care is taken to ensure that reasonably accurate sizes are used in the comparable grid; however, it is likely that the GLAs used in this report will vary from other appraisals in the area."
+  },
+  {
+    id: "condo-vs-fee-simple",
+    title: "Condo vs Fee Simple w/HOA (1sf Lot Size in Grid)",
+    tags: ["Adjustments"],
+    text: "Townhome projects are established in two ways: as condo developments, where units include shared ownership of common areas with no private land ownership, or as fee simple w/HOA developments, where each unit owns the land beneath it.\n\nIn fee simple w/HOA properties, land ownership is limited by HOA restrictions resulting in similar use and utility as condo developments.  There is no difference in marketability or value between the two.  Adjustments are not warranted.  A lot size of 1 sq ft is entered due to form limitations."
+  },
+  {
+    id: "firrea-cert",
+    title: "FIRREA Certification Statement",
+    tags: ["Disclosures"],
+    text: "The appraiser certifies and agrees that this appraisal was prepared in accordance with the requirements of Title XI of the Financial institutions, Reform, Recovery, and Enforcement Act (FIRREA) of 1989, as amended (12 U.S.C. 331 et seq.), and any applicable implementing regulations in effect at the time the appraiser signs the appraisal certification.\""
+  },
+  {
+    id: "cost-vs-sales",
+    title: "Cost Approach vs Sales Approach",
+    tags: ["Valuation"],
+    text: "The cost approach is not relevant for 100+ year old homes like the subject.  The cost approach is developed at the request of the client, but it is not a reasonable indiicator of market value and it is given no weight.  Cost approach varies from sales approach, but that is not uncommon due to the difficulty in estimating the replacement cost of a 100 year old dwelling.  Home construction standards have changed significantly over the decades."
+  },
+  {
+    id: "basement-cook",
+    title: "Basement Size Data in Cook County",
+    tags: ["Data Quality", "Cook County"],
+    text: "Cook County does not record the size of basements and there is no way to verify basement size.  It is not common for MLS listings to state basement size or basement finish size.  The lack of verifiable data also leads to estimates in the MLS that need to be verified.  Sometimes the best data source available is all the information in the listing combined with aerial maps like Google Satellite view.  Great care is taken to ensure that good data is used in the grid, but the basement data might vary from other appraisals in the area."
+  },
+  {
+    id: "dekalb-data",
+    title: "DeKalb County Data",
+    tags: ["Data Quality"],
+    text: "Public record property data in DeKalb County is not good, and most agents do not measure.  It is often necessary to estimate size and basement size using tools including satellite maps and measurements.  Specific GLA and basement sizes might vary from other appraisals in the area, but great care is taken to ensure that good data is used in the grid.  Reasonable data is crucial to providing a reasonable market value.  Year built is often not recorded and must be estimated."
+  },
+  {
+    id: "rental-data",
+    title: "Rental Data Comments",
+    tags: ["Rentals"],
+    text: "Rental data is not readily available since there is no public rental database like there is a sales database.  The assessor records all sales, but they do not record rental data.  The MRED Chicago Area MLS serves as the primary source of information, but most rental properties are not listed using an agent, since owners can list themselves online via Zillow, Hotpads, Apartments.com very easily.\n\nThe limitation with Zillow/Hotpad/Apartments.com data is that they only show list price and days on market.  The final rental price can be entered by the owner, but nobody does.  It is much less common for rental units to have list price drops and most units are marketed 'take it or leave it'.  Still, it is necessary to estimate rent based on the list price and days on market.  This is the best source of rental data in the neighborhood.  There is no way to independently verify the lease price since the owners contact info is not accessible.  The appraiser in the past has tried knocking on doors to confirm rent, but this rarely works and most homeowners do not answer."
+  },
+  {
+    id: "predominate-price",
+    title: "Predominate Price on Page 1",
+    tags: ["Valuation"],
+    text: "The predominate price reported on page 1 is just the median/average sale price of the neighborhood.  It has absolutely no relevance to the subject's market value.  If the subject is an underimprovement or an overimprovement, then that will be detailed elsewhere in the report.  In every neighborhood there exists a range of sale prices based on differences in property characteristics."
+  },
+  {
+    id: "gba-explanation",
+    title: "Size (GBA) Explanation",
+    tags: ["Rentals"],
+    text: "There are two indicators of size for rental properties like the subject, gross building area and gross leasable area.  Gross building area is the entire building square footage measured from the outside.  This is how rental buildings are compared in the sales approach.\n\nGross leasable area does not include common space.  Leasable area only considers the units which can be rented.  In order to determine a reasonable rent for the subject's units, it does not make sense to include the shared space.\n\nThis form is not ideal for properties with interior staircases and other shared area.  That is why there appears to be an inconsistency with the subject's size.  The subject's GBA including the staircases is 4,451 sf.  The subject's gross leasable area just considering the units is 4,041 sf."
+  },
+  {
+    id: "effective-age",
+    title: "Effective Age",
+    tags: ["Valuation"],
+    text: "Effective age is lower than actual age, but that is to be expected.  Corelogic estimates a building's total lifespan at ~60 years, but that assumes no updating.  Homes are updated and maintained in order to lower effective age and prolong lifespan."
+  },
+  {
+    id: "additional-comments",
+    title: "Additional Comments (Taxes / Client Successors)",
+    tags: [],
+    text: "2021 taxes are the most recent available.  The first installment of 2022 taxes is $943.\n\nThis report was prepared for Commercial Lender LLC (client), and their successors and/or assigns (including, without limitation subsequent owners of the Mortgage Loan and secondary market participants)"
+  },
+  {
+    id: "tick-checkboxes",
+    title: "Tick All Checkboxes for Website Upload (JS Snippet)",
+    tags: ["Utilities"],
+    text: "document.querySelectorAll('input[type=\"checkbox\"]').forEach(el => {\n  if (!el.checked) {\n    el.click();\n  }\n});"
+  }
+].map(s => ({ pinned: false, copyCount: 0, ...s }));
+
+function normalize(x) {
+  return {
+    id: x.id || "s-" + Math.random().toString(36).slice(2),
+    title: x.title,
+    text: x.text,
+    tags: Array.isArray(x.tags) ? x.tags : (x.category ? [x.category] : []),
+    pinned: !!x.pinned,
+    copyCount: x.copyCount || 0
+  };
+}
+
+function loadStatements() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length) return parsed.map(normalize);
+    }
+    // migrate from the v1 (category-based) format if present
+    const old = localStorage.getItem(OLD_STORAGE_KEY);
+    if (old) {
+      const parsed = JSON.parse(old);
+      if (Array.isArray(parsed) && parsed.length) return parsed.map(normalize);
+    }
+  } catch (e) { /* corrupted storage — fall back to seed */ }
+  return SEED;
+}
+
+function copyText(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    return navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+  }
+  return Promise.resolve(fallbackCopy(text));
+}
+
+function fallbackCopy(text) {
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand("copy");
+  document.body.removeChild(ta);
+}
+
+function StatementCard({ s, onCopy, onEdit, onDelete, onTogglePin, copied }) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <div
+      className={"card" + (copied ? " just-copied" : "")}
+      title="Click to copy"
+      onClick={() => onCopy(s)}
+    >
+      <div className="card-title">{s.title}</div>
+      <div className={"card-text" + (expanded ? " expanded" : "")}>{s.text}</div>
+      <div className="card-foot">
+        {s.tags.map(t => <span className="tag" key={t}>{t}</span>)}
+        {s.copyCount > 0 && <span className="count">copied ×{s.copyCount}</span>}
+      </div>
+
+      {s.pinned && <span className="pin-solo">★</span>}
+      <div className="card-controls" onClick={e => e.stopPropagation()}>
+        <button
+          className={"ctrl pin" + (s.pinned ? " pinned" : "")}
+          title={s.pinned ? "Unpin" : "Pin to top"}
+          onClick={() => onTogglePin(s.id)}
+        >★</button>
+        <button
+          className="ctrl expand"
+          title={expanded ? "Collapse" : "Show full text"}
+          onClick={() => setExpanded(!expanded)}
+        >{expanded ? "▴" : "▾"}</button>
+        <button className="ctrl edit" title="Edit" onClick={() => onEdit(s)}>✎</button>
+        <button className="ctrl del" title="Delete" onClick={() => onDelete(s)}>✕</button>
+      </div>
+      <div className="copy-hint">✓ Copied to clipboard</div>
+    </div>
+  );
+}
+
+function EditModal({ statement, allTags, onSave, onClose }) {
+  const [title, setTitle] = useState(statement ? statement.title : "");
+  const [tags, setTags] = useState(statement ? statement.tags.join(", ") : "");
+  const [text, setText] = useState(statement ? statement.text : "");
+  const titleRef = useRef(null);
+  useEffect(() => { if (titleRef.current) titleRef.current.focus(); }, []);
+
+  function save() {
+    if (!title.trim() || !text.trim()) return;
+    onSave({
+      ...(statement || { id: "s-" + Date.now(), pinned: false, copyCount: 0 }),
+      title: title.trim(),
+      tags: tags.split(",").map(t => t.trim()).filter(Boolean),
+      text: text
+    });
+  }
+
+  return (
+    <div className="overlay" onMouseDown={e => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="modal">
+        <h2>{statement ? "Edit Statement" : "New Statement"}</h2>
+        <div>
+          <label>Title</label>
+          <input type="text" ref={titleRef} value={title} onChange={e => setTitle(e.target.value)} />
+        </div>
+        <div>
+          <label>Tags <em>— optional, separate with commas</em></label>
+          <input type="text" list="tag-list" value={tags} onChange={e => setTags(e.target.value)} placeholder="e.g. Data Quality, Cook County" />
+          <datalist id="tag-list">
+            {allTags.map(t => <option key={t} value={t} />)}
+          </datalist>
+        </div>
+        <div>
+          <label>Statement Text <em>— copied exactly as written</em></label>
+          <textarea value={text} onChange={e => setText(e.target.value)} />
+        </div>
+        <div className="modal-actions">
+          <button className="btn" onClick={onClose}>Cancel</button>
+          <button className="btn primary" onClick={save} disabled={!title.trim() || !text.trim()}>Save</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [statements, setStatements] = useState(loadStatements);
+  const [query, setQuery] = useState("");
+  const [tagFilter, setTagFilter] = useState("All");
+  const [copiedId, setCopiedId] = useState(null);
+  const [modal, setModal] = useState(null); // null | { statement: s|null }
+  const searchRef = useRef(null);
+  const fileRef = useRef(null);
+  const copiedTimer = useRef(null);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(statements));
+  }, [statements]);
+
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === "/" && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA") {
+        e.preventDefault();
+        searchRef.current && searchRef.current.focus();
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const allTags = useMemo(() => {
+    const set = new Set();
+    statements.forEach(s => s.tags.forEach(t => set.add(t)));
+    return Array.from(set).sort();
+  }, [statements]);
+
+  const visible = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const list = statements.filter(s =>
+      (tagFilter === "All" || s.tags.includes(tagFilter)) &&
+      (!q || s.title.toLowerCase().includes(q) || s.text.toLowerCase().includes(q))
+    );
+    return list.slice().sort((a, b) => (b.pinned - a.pinned));
+  }, [statements, query, tagFilter]);
+
+  // if the active tag disappears (last statement with it edited/deleted), fall back to All
+  useEffect(() => {
+    if (tagFilter !== "All" && !allTags.includes(tagFilter)) setTagFilter("All");
+  }, [allTags, tagFilter]);
+
+  function handleCopy(s) {
+    copyText(s.text).then(() => {
+      setStatements(prev => prev.map(x => x.id === s.id ? { ...x, copyCount: (x.copyCount || 0) + 1 } : x));
+      setCopiedId(s.id);
+      clearTimeout(copiedTimer.current);
+      copiedTimer.current = setTimeout(() => setCopiedId(null), 1200);
+    });
+  }
+
+  function handleSave(s) {
+    setStatements(prev => {
+      const exists = prev.some(x => x.id === s.id);
+      return exists ? prev.map(x => x.id === s.id ? s : x) : [s, ...prev];
+    });
+    setModal(null);
+  }
+
+  function handleDelete(s) {
+    if (window.confirm('Delete "' + s.title + '"?')) {
+      setStatements(prev => prev.filter(x => x.id !== s.id));
+    }
+  }
+
+  function togglePin(id) {
+    setStatements(prev => prev.map(x => x.id === id ? { ...x, pinned: !x.pinned } : x));
+  }
+
+  function exportJson() {
+    const blob = new Blob([JSON.stringify(statements, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "appraisal-statements-backup.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function importJson(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result);
+        if (!Array.isArray(data)) throw new Error("not an array");
+        const cleaned = data.filter(x => x && x.title && x.text).map(normalize);
+        if (!cleaned.length) throw new Error("no valid statements");
+        if (window.confirm("Replace your current " + statements.length + " statements with " + cleaned.length + " imported statements?")) {
+          setStatements(cleaned);
+        }
+      } catch (err) {
+        alert("Could not import that file: " + err.message);
+      }
+      e.target.value = "";
+    };
+    reader.readAsText(file);
+  }
+
+  function resetDefaults() {
+    if (window.confirm("Reset to the original built-in statement list? Your edits and additions will be lost.")) {
+      setStatements(SEED);
+    }
+  }
+
+  return (
+    <React.Fragment>
+      <header className="appbar">
+        <div className="appbar-row">
+          <h1>Appraisal Statements <span>· click a card to copy</span></h1>
+          <div className="search">
+            <span>🔍</span>
+            <input
+              ref={searchRef}
+              placeholder="Search…  (press / to focus)"
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+            />
+            {query && <button className="clear" onClick={() => setQuery("")}>✕</button>}
+          </div>
+          <div className="toolbar-right">
+            <button className="btn primary" onClick={() => setModal({ statement: null })}>+ New</button>
+            <button className="btn" onClick={exportJson} title="Download a JSON backup of all statements">Export</button>
+            <button className="btn" onClick={() => fileRef.current.click()} title="Restore from a JSON backup">Import</button>
+            <button className="btn" onClick={resetDefaults} title="Restore the original list">Reset</button>
+            <input type="file" accept=".json,application/json" ref={fileRef} style={{ display: "none" }} onChange={importJson} />
+          </div>
+        </div>
+        {allTags.length > 0 && (
+          <div className="chips">
+            {["All"].concat(allTags).map(t => (
+              <button
+                key={t}
+                className={"chip" + (tagFilter === t ? " active" : "")}
+                onClick={() => setTagFilter(t)}
+              >{t}</button>
+            ))}
+          </div>
+        )}
+      </header>
+      <main>
+        {visible.length === 0
+          ? <div className="empty">No statements match your search.</div>
+          : <div className="grid">
+              {visible.map(s => (
+                <StatementCard
+                  key={s.id}
+                  s={s}
+                  copied={copiedId === s.id}
+                  onCopy={handleCopy}
+                  onEdit={st => setModal({ statement: st })}
+                  onDelete={handleDelete}
+                  onTogglePin={togglePin}
+                />
+              ))}
+            </div>
+        }
+      </main>
+      <footer>
+        {statements.length} statements · saved automatically in this browser · <kbd>/</kbd> to search · hover a card for pin / expand / edit / delete
+      </footer>
+      {modal && (
+        <EditModal
+          statement={modal.statement}
+          allTags={allTags}
+          onSave={handleSave}
+          onClose={() => setModal(null)}
+        />
+      )}
+    </React.Fragment>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

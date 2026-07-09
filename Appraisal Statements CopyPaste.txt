@@ -1,0 +1,188 @@
+
+Contract Price vs Estimate of Market Value-
+
+Contract price is based on the motivations of the particular buyer and seller in the contract.  Market value is based on the motivations of the 'typical' buyer and seller, assuming a hypothetical sale of the subject using all of the data available to arrive at a 'most probable' price.  
+
+It is not reasonable or correct to speculate on the motivations of the buyer and seller in the contract, but when contract price and market value vary it should be specifically addressed.  
+
+
+
+Illinois Home Inspection disclosure-
+
+The comments by the licensed real estate appraiser contained within this appraisal report on the condition of the property do not address "standards of practice" as defined in the home inspector license act [225 ILCS 441] and 68 ILL. Adm. Code 1410 and are not to be considered a home inspection or home inspection report.
+
+
+
+Borrower Vs Owner of Public Record-  
+
+The borrower varies from the owner of public record, but this has no effect on the appraisal or the subject's marketability/value.
+
+
+
+
+GBA Data in Cook County- 
+
+Basement size is not recorded by the Cook County Assessor and agents do not typically measure for MLS listings.  GBA data is also not always accurate and it is not common to measure the building for the MLS listing.  In some cases, the best data available is a reasonable estimate of the finished size based on the assessor data, the MLS data, and aerial map measurements using Google satellite map measurement tools.  Great care is taken to ensure that good size data is used in the grid, but the GBAs might vary from other appraisals in the are.
+
+
+
+
+
+GLA Discrepancies for 2-Story Properties in Cook County-
+
+Property sketches are not available in Cook County and the GLA data for 2-story homes is not good.  Additions are not usually captured and second floor space is rarely captured for bungalow and capecod style homes.  MLS data is also not good, since only interior rooms are measured if anything is measured at all.  Many listings use the County assessor's size regardless of accuracy and a significant number of listings omit size completely.  Basement data is also not recorded by the assessor and MLS listings.
+
+In many cases, the best GLA source for 2-story properties in Cook County is an estimate using Google satellite maps measuring tool along with the data in the MLS listing and assessor.  Any floorplan sketches uploaded to the MLS are sketched for square footage, but MLS floorplans are not common.
+
+The GLA and basement size data in the grid might vary from other appraisals in the area, but great care is taken to ensure that reasonable and accurate measurements are used for the comparables in the grid.
+
+
+
+
+
+Comments on Budget for Improvements-
+
+The subject is not a contractor and the best cost estimates come from actual bids for the work to be completed.  Based on the inspection, prior renovation projects, and the Marshal Swift Residential Cost Handbook, the budget is complete and reasonable.  No irregularities are noted.
+
+
+
+
+
+MC FORM GARBAGE-
+
+This form is not a reasonable tool for demonstrating market trends and the data above should be ignored.  See attached "Market Conditions Data from MRED MLS"  This form arbitrarily splits the year into a 6-month period and two 3-month periods.  The statistical analysis of the form is not robust enough to properly display the market trends.  It is recognized that the grid above shows prices are decreasing from $235,000 to $175,000, but that is not accurate.  This form is not relevant.  Prices are increasing and higher compared to 2024.  See attached "Market Conditions Data from MRED MLS".
+
+If every home were similar and there were hundreds of sales each period, then this form would work; however, there simply isn't enough data for this analysis to be relevant.  The data in the grid above and at the top of pg 2 is based on all of the sales in the neighborhood.  This form would be even less relevant if only the 'comparable' sales were considered.
+
+
+
+
+Seller Concession Adjustments-
+
+It is not logical to assume that a seller - acting in their own best interest - would give free money to the buyer during negotiations.  If money is needed to bring a buyer to the table, the seller will certainly factor that cost into the price of the home.  In most cases, seller concessions should be adjusted dollar-for-dollar.  Realtors report that sellers are only interested in the final value.
+
+Some claim that a certain amount of seller concessions are typical and should not be adjusted.  Following this logic, upward adjustments should be made to the sales that do not have seller concessions.  Of course this is unreasonable.  (Valuation by Comparison 2nd Edition, published by the Appraisal Institute, authored by Mark R. Ratterman, MAI, SRA (page 140))
+
+
+
+
+GLA Data for Attached Units in Cook County-
+
+Cook County does not record the size of attached units, and property sketches are not made available.  There is no MLS standard for property size among agents.  Many listings inflate size and a significant number of listings omit size completely.  
+
+Some listings do include a floorplan sketch that can be traced to calculate size, but in general GLA data is not good for attached properties in Cook County.  In many cases, the best source available is a reasonable estimate using Google Earth satellite maps and measuring tools.  
+
+Great care is taken to ensure that reasonably accurate sizes are used in the comparable grid; however, it is likely that the GLAs used in this report will vary from other appraisals in the area.
+
+
+
+
+Condo vs Fee Simple w/HOA Project (why some comps have 1sf in the grid for lot size)-
+
+Townhome projects are established in two ways: as condo developments, where units include shared ownership of common areas with no private land ownership, or as fee simple w/HOA developments, where each unit owns the land beneath it.
+
+In fee simple w/HOA properties, land ownership is limited by HOA restrictions resulting in similar use and utility as condo developments.  There is no difference in marketability or value between the two.  Adjustments are not warranted.  A lot size of 1 sq ft is entered due to form limitations.
+
+
+
+FIRREA Certification Statement -
+
+The appraiser certifies and agrees that this appraisal was prepared in accordance with the requirements of Title XI of the Financial institutions, Reform, Recovery, and Enforcement Act (FIRREA) of 1989, as amended (12 U.S.C. 331 et seq.), and any applicable implementing regulations in effect at the time the appraiser signs the appraisal certification."
+
+
+
+
+Cost Approach vs Sales Approach-
+
+The cost approach is not relevant for 100+ year old homes like the subject.  The cost approach is developed at the request of the client, but it is not a reasonable indiicator of market value and it is given no weight.  Cost approach varies from sales approach, but that is not uncommon due to the difficulty in estimating the replacement cost of a 100 year old dwelling.  Home construction standards have changed significantly over the decades.
+
+
+
+
+
+
+Basement Size Data in Cook County-
+
+Cook County does not record the size of basements and there is no way to verify basement size.  It is not common for MLS listings to state basement size or basement finish size.  The lack of verifiable data also leads to estimates in the MLS that need to be verified.  Sometimes the best data source available is all the information in the listing combined with aerial maps like Google Satellite view.  Great care is taken to ensure that good data is used in the grid, but the basement data might vary from other appraisals in the area.
+
+
+
+
+GLA Discrepancies for 2-Story Properties in Cook County-
+
+Property sketches are not available in Cook County and the GLA data for 2-story homes is not good.  Additions are not usually captured and second floor space is rarely captured for bungalow and capecod style homes.  MLS data is also not good, since only interior rooms are measured if anything is measured at all.  Many listings use the County assessor's size regardless of accuracy and a significant number of listings omit size completely.  Basement data is also not recorded by the assessor and MLS listings.
+
+In many cases, the best GLA source for 2-story properties in Cook County is an estimate using Google satellite maps measuring tool along with the data in the MLS listing and assessor.  Any floorplan sketches uploaded to the MLS are sketched for square footage, but MLS floorplans are not common.
+
+The GLA and basement size data in the grid might vary from other appraisals in the area, but great care is taken to ensure that reasonable and accurate measurements are used for the comparables in the grid.
+
+
+
+
+DeKalb County Data-
+
+Public record property data in DeKalb County is not good, and most agents do not measure.  It is often necessary to estimate size and basement size using tools including satellite maps and measurements.  Specific GLA and basement sizes might vary from other appraisals in the area, but great care is taken to ensure that good data is used in the grid.  Reasonable data is crucial to providing a reasonable market value.  Year built is often not recorded and must be estimated.
+
+
+
+
+Rental Data Comments-
+
+Rental data is not readily available since there is no public rental database like there is a sales database.  The assessor records all sales, but they do not record rental data.  The MRED Chicago Area MLS serves as the primary source of information, but most rental properties are not listed using an agent, since owners can list themselves online via Zillow, Hotpads, Apartments.com very easily.
+
+The limitation with Zillow/Hotpad/Apartments.com data is that they only show list price and days on market.  The final rental price can be entered by the owner, but nobody does.  It is much less common for rental units to have list price drops and most units are marketed 'take it or leave it'.  Still, it is necessary to estimate rent based on the list price and days on market.  This is the best source of rental data in the neighborhood.  There is no way to independently verify the lease price since the owners contact info is not accessible.  The appraiser in the past has tried knocking on doors to confirm rent, but this rarely works and most homeowners do not answer.
+
+
+
+
+Predominate Price on Page 1-
+
+The predominate price reported on page 1 is just the median/average sale price of the neighborhood.  It has absolutely no relevance to the subject's market value.  If the subject is an underimprovement or an overimprovement, then that will be detailed elsewhere in the report.  In every neighborhood there exists a range of sale prices based on differences in property characteristics.  
+
+
+
+
+Size (GBA) Explanation-
+
+There are two indicators of size for rental properties like the subject, gross building area and gross leasable area.  Gross building area is the entire building square footage measured from the outside.  This is how rental buildings are compared in the sales approach.
+
+Gross leasable area does not include common space.  Leasable area only considers the units which can be rented.  In order to determine a reasonable rent for the subject's units, it does not make sense to include the shared space.
+
+This form is not ideal for properties with interior staircases and other shared area.  That is why there appears to be an inconsistency with the subject's size.  The subject's GBA including the staircases is 4,451 sf.  The subject's gross leasable area just considering the units is 4,041 sf.
+
+
+
+
+Effective Age-
+
+Effective age is lower than actual age, but that is to be expected.  Corelogic estimates a building's total lifespan at ~60 years, but that assumes no updating.  Homes are updated and maintained in order to lower effective age and prolong lifespan.
+
+
+
+
+Seller Concessions Adjustments -
+
+It is not logical to assume that a seller - acting in their own best interest - would give free money to the buyer during negotiations.  If money is needed to bring a buyer to the table, the seller will certainly factor that cost into the price of the home.  In most cases, seller concessions should be adjusted dollar-for-dollar.
+
+Some claim that a certain amount of seller concessions are typical and should not be adjusted.  Following this logic, upward adjustments should be made to the sales that do not have seller concessions.  Of course this is unreasonable.  (Valuation by Comparison 2nd Edition, published by the Appraisal Institute, authored by Mark R. Ratterman, MAI, SRA (page 140))
+
+
+
+
+Additional Comments-
+
+2021 taxes are the most recent available.  The first installment of 2022 taxes is $943.
+
+This report was prepared for Commercial Lender LLC (client), and their successors and/or assigns (including, without limitation subsequent owners of the Mortgage Loan and secondary market participants)
+
+
+
+Tick all checkboxes for website upload-
+
+document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+  if (!el.checked) {
+    el.click();
+  }
+});
+
+----
