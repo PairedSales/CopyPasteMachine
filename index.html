@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Appraisal Statement Library</title>
-<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
+<script crossorigin src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.26.4/babel.min.js"></script>
 <style>
   /* Dracula palette */
   :root {
@@ -174,6 +174,34 @@
   }
   .modal input:focus, .modal textarea:focus { border-color: var(--purple); }
   .modal textarea { min-height: 220px; resize: vertical; line-height: 1.5; }
+  /* tag editor */
+  .tag-editor {
+    display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+    border: 1px solid var(--current-line); border-radius: 8px;
+    background: var(--bg); padding: 7px 9px; min-height: 40px;
+  }
+  .tag-editor:focus-within { border-color: var(--purple); }
+  .tag-input {
+    flex: 1; min-width: 120px; border: none; background: transparent; outline: none;
+    color: var(--fg); font-size: 14px; padding: 2px;
+  }
+  .tag-input::placeholder { color: var(--comment); }
+  .tag-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    border-radius: 999px; padding: 3px 10px; font-size: 12.5px; cursor: pointer;
+    border: 1px solid var(--comment); background: transparent; color: var(--comment);
+    font-family: inherit;
+  }
+  .tag-pill:hover { border-color: var(--cyan); color: var(--cyan); }
+  .tag-pill.active {
+    background: var(--purple); border-color: var(--purple); color: var(--bg); font-weight: 600;
+  }
+  .tag-pill.active .x { opacity: .7; font-size: 11px; }
+  .tag-pill.active:hover { background: var(--red); border-color: var(--red); }
+  .tag-suggest {
+    display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 8px;
+  }
+  .tag-suggest-label { font-size: 12px; color: var(--comment); }
   .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
   .toolbar-right { display: flex; gap: 8px; }
   footer { text-align: center; color: var(--comment); font-size: 12px; padding: 10px 0 30px; }
@@ -397,17 +425,40 @@ function StatementCard({ s, onCopy, onEdit, onDelete, onTogglePin, copied }) {
 
 function EditModal({ statement, allTags, onSave, onClose }) {
   const [title, setTitle] = useState(statement ? statement.title : "");
-  const [tags, setTags] = useState(statement ? statement.tags.join(", ") : "");
+  const [tags, setTags] = useState(statement ? statement.tags.slice() : []);
+  const [newTag, setNewTag] = useState("");
   const [text, setText] = useState(statement ? statement.text : "");
   const titleRef = useRef(null);
   useEffect(() => { if (titleRef.current) titleRef.current.focus(); }, []);
 
+  // tags that exist elsewhere but aren't on this statement yet — offered as one-click adds
+  const suggestions = allTags.filter(t => !tags.includes(t));
+
+  function addTag(t) {
+    const clean = t.trim();
+    if (clean && !tags.includes(clean)) setTags([...tags, clean]);
+    setNewTag("");
+  }
+  function removeTag(t) {
+    setTags(tags.filter(x => x !== t));
+  }
+  function onTagKeyDown(e) {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      if (newTag.trim()) addTag(newTag);
+    } else if (e.key === "Backspace" && !newTag && tags.length) {
+      removeTag(tags[tags.length - 1]);
+    }
+  }
+
   function save() {
     if (!title.trim() || !text.trim()) return;
+    // fold any half-typed tag still in the input into the saved list
+    const finalTags = newTag.trim() && !tags.includes(newTag.trim()) ? [...tags, newTag.trim()] : tags;
     onSave({
       ...(statement || { id: "s-" + Date.now(), pinned: false, copyCount: 0 }),
       title: title.trim(),
-      tags: tags.split(",").map(t => t.trim()).filter(Boolean),
+      tags: finalTags,
       text: text
     });
   }
@@ -421,11 +472,32 @@ function EditModal({ statement, allTags, onSave, onClose }) {
           <input type="text" ref={titleRef} value={title} onChange={e => setTitle(e.target.value)} />
         </div>
         <div>
-          <label>Tags <em>— optional, separate with commas</em></label>
-          <input type="text" list="tag-list" value={tags} onChange={e => setTags(e.target.value)} placeholder="e.g. Data Quality, Cook County" />
-          <datalist id="tag-list">
-            {allTags.map(t => <option key={t} value={t} />)}
-          </datalist>
+          <label>Tags <em>— optional · click to add or remove</em></label>
+          <div className="tag-editor">
+            {tags.map(t => (
+              <button type="button" className="tag-pill active" key={t} title="Click to remove" onClick={() => removeTag(t)}>
+                {t} <span className="x">✕</span>
+              </button>
+            ))}
+            <input
+              className="tag-input"
+              type="text"
+              value={newTag}
+              onChange={e => setNewTag(e.target.value)}
+              onKeyDown={onTagKeyDown}
+              placeholder={tags.length ? "add tag…" : "type a tag, then Enter"}
+            />
+          </div>
+          {suggestions.length > 0 && (
+            <div className="tag-suggest">
+              <span className="tag-suggest-label">Existing:</span>
+              {suggestions.map(t => (
+                <button type="button" className="tag-pill" key={t} title="Click to add" onClick={() => addTag(t)}>
+                  + {t}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         <div>
           <label>Statement Text <em>— copied exactly as written</em></label>
