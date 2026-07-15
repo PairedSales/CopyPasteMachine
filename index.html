@@ -388,13 +388,32 @@ function fallbackCopy(text) {
   document.body.removeChild(ta);
 }
 
-function StatementCard({ s, onCopy, onEdit, onDelete, onTogglePin, copied }) {
+function escapeHtml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+// copies title (bold, hyphen-suffixed) + blank line + body, as rich text with a plain-text fallback
+function copyWithTitle(s) {
+  const plain = s.title + "-\n\n" + s.text;
+  const html = "<b>" + escapeHtml(s.title) + "-</b><br><br>" + escapeHtml(s.text).replace(/\n/g, "<br>");
+  if (navigator.clipboard && window.ClipboardItem) {
+    const item = new ClipboardItem({
+      "text/html": new Blob([html], { type: "text/html" }),
+      "text/plain": new Blob([plain], { type: "text/plain" })
+    });
+    return navigator.clipboard.write([item]).catch(() => copyText(plain));
+  }
+  return copyText(plain);
+}
+
+function StatementCard({ s, onCopy, onCopyWithTitle, onEdit, onDelete, onTogglePin, copied }) {
   const [expanded, setExpanded] = useState(false);
   return (
     <div
       className={"card" + (copied ? " just-copied" : "")}
-      title="Click to copy"
+      title="Click to copy · Right-click to copy with title"
       onClick={() => onCopy(s)}
+      onContextMenu={e => { e.preventDefault(); onCopyWithTitle(s); }}
     >
       <div className="card-title">{s.title}</div>
       <div className={"card-text" + (expanded ? " expanded" : "")}>{s.text}</div>
@@ -566,6 +585,15 @@ function App() {
     });
   }
 
+  function handleCopyWithTitle(s) {
+    copyWithTitle(s).then(() => {
+      setStatements(prev => prev.map(x => x.id === s.id ? { ...x, copyCount: (x.copyCount || 0) + 1 } : x));
+      setCopiedId(s.id);
+      clearTimeout(copiedTimer.current);
+      copiedTimer.current = setTimeout(() => setCopiedId(null), 1200);
+    });
+  }
+
   function handleSave(s) {
     setStatements(prev => {
       const exists = prev.some(x => x.id === s.id);
@@ -665,6 +693,7 @@ function App() {
                   s={s}
                   copied={copiedId === s.id}
                   onCopy={handleCopy}
+                  onCopyWithTitle={handleCopyWithTitle}
                   onEdit={st => setModal({ statement: st })}
                   onDelete={handleDelete}
                   onTogglePin={togglePin}
